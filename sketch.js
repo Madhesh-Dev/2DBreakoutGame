@@ -1,6 +1,11 @@
+// Added score also
+
 let paddle_x, paddle_y, paddle_width, paddle_height, paddle_dx;
 let ball_x, ball_y, ball_diameter, ball_dx, ball_dy;
 let brick_x, brick_y, brick_width, brick_height, flag = true;
+
+let score = 0;
+
 function setup() {
   createCanvas(400, 400);
   background("black");
@@ -16,11 +21,10 @@ function setup() {
   ball_x = (width / 2) - (ball_diameter / 2);
   ball_y = (height / 2) - (ball_diameter / 2);
   
-  brick_x = 50;
-  brick_y = 50;
+  brick_x = 20;
+  brick_y = 20;
   brick_width = 75;
   brick_height = 25;
-  
 }
 
 function draw () {
@@ -47,31 +51,36 @@ function draw () {
   ball_y = ball_y + ball_dy;
   
   if (keyIsDown(LEFT_ARROW)) {
-    paddle_x = paddle_x - paddle_dx;
+    if(paddle_x>0){
+      paddle_x = paddle_x - paddle_dx;
+    }
+    
   }
     if (keyIsDown(RIGHT_ARROW)) {
-    paddle_x = paddle_x + paddle_dx;
+      if(paddle_x + paddle_width < width){
+           paddle_x = paddle_x + paddle_dx;
+         }
+    
   }
- if((ball_x<paddle_x+paddle_width) && 
-    (ball_x>paddle_x) && 
-    (ball_y<paddle_y+(paddle_height / 2))  && 
-    (ball_y>paddle_y)){
-   ball_dy=-ball_dy;
- }
- //   if((ball_x<paddle_x+paddle_width) && 
- //    (ball_x>paddle_x) && 
- //   ball_y + (ball_diameter/2) < (height-25)){
- //   ball_dy=-ball_dy;
- // }
+ 
+  if((ball_x>=paddle_x) && (ball_x<=paddle_x+paddle_width) && (ball_y>paddle_y-(ball_diameter/2))){
+    ball_dy = -ball_dy;
+  }
   
-  if(ball_y <= brick_y + brick_height){
-    if((ball_x <= brick_x+brick_width) && (ball_x>=brick_x)){
-      flag = false;
-    }
+  if((ball_x>=brick_x) && (ball_x<=brick_x+brick_width) && (ball_y<=brick_y+brick_height+(ball_diameter/2))){
+    if(flag) score+=1;
+    flag = false;
+    
   }
   
   circle(ball_x, ball_y, ball_diameter);
   rect(paddle_x, paddle_y, paddle_width, paddle_height);
   // only render if flag is true
   flag && rect(brick_x,brick_y,brick_width,brick_height);
+  
+  // score
+  textSize(18);
+  fill('white');
+  text('Score: '+score, 175, 15);
+  
 }
